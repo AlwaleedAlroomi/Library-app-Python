@@ -417,7 +417,7 @@ QSlider::sub-page:vertical {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>8</number>
     </property>
     <widget class="QWidget" name="tab_21">
      <attribute name="title">
@@ -813,7 +813,7 @@ QSlider::sub-page:vertical {
        </rect>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_8">
        <attribute name="title">
@@ -886,6 +886,9 @@ QSlider::sub-page:vertical {
           <width>711</width>
           <height>431</height>
          </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
         </property>
         <column>
          <property name="text">
@@ -1401,7 +1404,7 @@ QSlider::sub-page:vertical {
        </rect>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_11">
        <attribute name="title">
@@ -2533,7 +2536,7 @@ QSlider::sub-page:vertical {
           </rect>
          </property>
          <property name="placeholderText">
-          <string>Branch Location</string>
+          <string>Publisher Location</string>
          </property>
         </widget>
         <widget class="QPushButton" name="pushButton_21">
@@ -3510,7 +3513,7 @@ QSlider::sub-page:vertical {
      </size>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_5">
+   <widget class="QPushButton" name="pushButton_6">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -3533,7 +3536,7 @@ QSlider::sub-page:vertical {
      </size>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_6">
+   <widget class="QPushButton" name="pushButton_5">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -3583,8 +3586,8 @@ QSlider::sub-page:vertical {
    <zorder>pushButton_2</zorder>
    <zorder>pushButton_3</zorder>
    <zorder>pushButton_4</zorder>
-   <zorder>pushButton_5</zorder>
    <zorder>pushButton_6</zorder>
+   <zorder>pushButton_5</zorder>
    <zorder>pushButton_7</zorder>
    <zorder>tabWidget</zorder>
   </widget>
