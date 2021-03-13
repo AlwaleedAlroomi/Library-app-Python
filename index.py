@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 import sys
 import MySQLdb
+import datetime
 
 mainui, _ = uic.loadUiType('main.ui')
 
@@ -17,6 +18,10 @@ class Main(QMainWindow, mainui):
         self.Handle_Buttons()
         self.UI_changes()
         self.Open_Daily_movements_tab()
+        self.Show_All_Categories()
+        self.Show_Branchies()
+        self.Show_Publisher()
+        self.Show_Authors()
 
     def UI_changes(self):
         # UI changes in login
@@ -44,6 +49,8 @@ class Main(QMainWindow, mainui):
         self.pushButton_21.clicked.connect(self.Add_Publisher)
         self.pushButton_23.clicked.connect(self.Add_Author)
         self.pushButton_24.clicked.connect(self.Add_Category)
+        self.pushButton_20.clicked.connect(self.Add_Employee)
+        self.pushButton_10.clicked.connect(self.Add_New_Book)
 
     def Handle_Login(self):
         # Handle login
@@ -65,7 +72,26 @@ class Main(QMainWindow, mainui):
 
     def Add_New_Book(self):
         # To Add_New_Book
-        pass
+        book_title = self.lineEdit_51.text()
+        book_description = self.lineEdit_2.text()
+        book_category = self.comboBox_3.currentIndex()
+        book_code = self.lineEdit_4.text()
+        book_barcode = self.lineEdit_52.text()
+        book_part_order = self.lineEdit_5.text()
+        book_price = self.lineEdit_3.text()
+        book_publisher = self.comboBox_7.currentIndex()
+        book_author = self.comboBox_6.currentIndex()
+        book_status = self.comboBox_22.currentIndex()
+        date = datetime.datetime.now()
+
+        self.cur.execute('''
+            INSERT INTO books
+            (title, description, category_id, code, barcode, part_order, price, publisher_id, author_id, status, date)
+            VALUES
+            (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ''', (book_title, book_description, book_category, book_code, book_barcode, book_part_order, book_price, book_publisher, book_author, book_status, date))
+        self.db.commit()
+        print('book added successfully')
 
     def Edit_Book(self):
         # Edit_Book
@@ -156,7 +182,23 @@ class Main(QMainWindow, mainui):
     def Add_Category(self):
         # To Add_Category
         category_name = self.lineEdit_33.text()
-        parent_category
+        parent_category_text = self.comboBox_12.currentText()
+        # To get the id of the parent category
+        query = '''SELECT id FROM category WHERE category_name = %s'''
+        self.cur.execute(query, [(parent_category_text)])
+        data_id = self.cur.fetchone()
+        parent_category_id = data_id[0]
+        # To add the new category with the parent category id
+        self.cur.execute('''
+            INSERT INTO category
+            (category_name, parent_category)
+            VALUES
+            (%s, %s)
+        ''', (category_name, parent_category_id))
+        self.db.commit()
+        print('category added')
+        # To show the new category after added without restart the app
+        self.Show_All_Categories()
 
     def Add_Publisher(self):
         # To Add_Publisher
@@ -186,7 +228,26 @@ class Main(QMainWindow, mainui):
 
     def Add_Employee(self):
         # To Add_Employee
-        pass
+        employee_name = self.lineEdit_24.text()
+        employee_mail = self.lineEdit_23.text()
+        employee_phone = self.lineEdit_27.text()
+        employee_branch = self.comboBox_20.currentIndex()
+        employee_national_id = self.lineEdit_25.text()
+        employee_periority = self.lineEdit_49.text()
+        employee_password = self.lineEdit_29.text()
+        employee_password_confirm = self.lineEdit_30.text()
+        date = datetime.datetime.now()
+
+        if employee_password == employee_password_confirm:
+            self.cur.execute('''
+                INSERT INTO employee 
+                (name, mail, phone, date, National_ID, periority, password, branch)
+                VALUES
+                (%s, %s, %s, %s, %s, %s, %s, %s)
+            ''', (employee_name, employee_mail, employee_phone, date, employee_national_id, employee_periority, employee_password, employee_branch))
+            self.db.commit()
+        else:
+            print('Wrong password')
 
     def Edit_Employee(self):
         # To Edit_Employee
@@ -199,6 +260,43 @@ class Main(QMainWindow, mainui):
     def Admin_Report(self):
         # To send Admin_Report
         pass
+
+    ###############################
+    # Show Functions
+    def Show_All_Categories(self):
+        self.comboBox_12.clear()
+        self.cur.execute('''
+            SELECT category_name FROM category
+        ''')
+        categories = self.cur.fetchall()
+        for category in categories:
+            self.comboBox_12.addItem(str(category[0]))
+            self.comboBox_3.addItem(str(category[0]))
+
+    def Show_Branchies(self):
+        self.cur.execute('''
+            SELECT name FROM branch
+        ''')
+        branchies = self.cur.fetchall()
+        for branch in branchies:
+            self.comboBox_20.addItem(str(branch[0]))
+            self.comboBox_21.addItem(str(branch[0]))
+
+    def Show_Publisher(self):
+        self.cur.execute('''
+            SELECT name FROM publisher
+        ''')
+        publishers = self.cur.fetchall()
+        for publisher in publishers:
+            self.comboBox_7.addItem(str(publisher[0]))
+
+    def Show_Authors(self):
+        self.cur.execute('''
+            SELECT name FROM author
+        ''')
+        authores = self.cur.fetchall()
+        for author in authores:
+            self.comboBox_6.addItem(str(author[0]))
 
     ###############################
 
