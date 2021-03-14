@@ -824,7 +824,7 @@ QSlider::sub-page:vertical {
        </rect>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab_8">
        <attribute name="title">
@@ -1262,6 +1262,9 @@ QSlider::sub-page:vertical {
           <height>231</height>
          </rect>
         </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+        </property>
         <property name="placeholderText">
          <string>Bood Full Description</string>
         </property>
@@ -1351,7 +1354,7 @@ QSlider::sub-page:vertical {
          </rect>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Author:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Status:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
        <widget class="QComboBox" name="comboBox_8">
@@ -1363,6 +1366,21 @@ QSlider::sub-page:vertical {
           <height>31</height>
          </rect>
         </property>
+        <item>
+         <property name="text">
+          <string>New</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Used</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Damaged</string>
+         </property>
+        </item>
        </widget>
        <widget class="QComboBox" name="comboBox_9">
         <property name="geometry">
@@ -1476,7 +1494,7 @@ QSlider::sub-page:vertical {
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab_11">
        <attribute name="title">
@@ -1839,7 +1857,7 @@ QSlider::sub-page:vertical {
          </rect>
         </property>
         <property name="text">
-         <string>Save Client </string>
+         <string>Search Client </string>
         </property>
        </widget>
        <widget class="QComboBox" name="comboBox_11">
@@ -1853,17 +1871,17 @@ QSlider::sub-page:vertical {
         </property>
         <item>
          <property name="text">
+          <string>Client Name</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>Client Mail</string>
          </property>
         </item>
         <item>
          <property name="text">
           <string>Client Phone</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Client Name</string>
          </property>
         </item>
         <item>

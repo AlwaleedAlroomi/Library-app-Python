@@ -54,6 +54,9 @@ class Main(QMainWindow, mainui):
         self.pushButton_20.clicked.connect(self.Add_Employee)
         self.pushButton_10.clicked.connect(self.Add_New_Book)
         self.pushButton_15.clicked.connect(self.Add_New_Client)
+        self.pushButton_11.clicked.connect(self.Edit_Book_Search)
+        self.pushButton_12.clicked.connect(self.Save_Edit)
+        self.pushButton_17.clicked.connect(self.Edit_Client_Search)
 
     def Handle_Login(self):
         # Handle login
@@ -105,11 +108,49 @@ class Main(QMainWindow, mainui):
             (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ''', (book_title, book_description, book_category, book_code, book_barcode, book_part_order, book_price, book_publisher, book_author, book_status, date))
         self.db.commit()
-        print('book added successfully')
+        self.statusBar().showMessage('Book added successfully')
 
-    def Edit_Book(self):
+    def Edit_Book_Search(self):
         # Edit_Book
-        pass
+        book_code = self.lineEdit_10.text()
+        sql = ('''
+            SELECT * FROM books WHERE code = %s
+        ''')
+        self.cur.execute(sql, [(book_code)])
+        date = self.cur.fetchone()
+        # Set the date in their fields
+        self.lineEdit_8.setText(date[1])
+        self.lineEdit_7.setText(date[2])
+        self.lineEdit_6.setText(str(date[6]))
+        self.lineEdit_9.setText(str(date[7]))
+        self.comboBox_4.setCurrentIndex(int(date[3]))
+        self.comboBox_9.setCurrentIndex(int(date[8]))
+        self.comboBox_10.setCurrentIndex(int(date[9]))
+        self.comboBox_8.setCurrentIndex(int(date[11]))
+
+    def Save_Edit(self):
+        # To save edits
+        book_title = self.lineEdit_8.text()
+        book_description = self.lineEdit_7.text()
+        book_category = self.comboBox_3.currentIndex()
+        book_code = self.lineEdit_10.text()
+        book_part_order = self.lineEdit_6.text()
+        book_price = self.lineEdit_9.text()
+        book_publisher = self.comboBox_9.currentIndex()
+        book_author = self.comboBox_10.currentIndex()
+        book_status = self.comboBox_8.currentIndex()
+        self.cur.execute('''
+                         UPDATE books 
+                         SET title = %s, description = %s, code = %s, 
+                         part_order = %s, price = %s, status = %s, 
+                         category_id = %s, publisher_id = %s, author_id = %s
+                         WHERE code = %s
+                         ''', (book_title, book_description, book_code,
+                               book_part_order, book_price, book_status,
+                               book_category, book_publisher, book_author,
+                               book_code))
+        self.db.commit()
+        self.statusBar().showMessage('Book information updated successfully')
 
     def Delete_Book(self):
         # To Delete_Book
@@ -147,7 +188,39 @@ class Main(QMainWindow, mainui):
             (%s, %s, %s, %s, %s)
         ''', (client_name, client_mail, client_phone, date, client_national_id))
         self.db.commit()
-        print('client added successfully')
+        self.statusBar().showMessage('Client added successfully')
+
+    def Edit_Client_Search(self):
+        # Edit_Client
+        client_data = self.lineEdit_19.text()
+        if self.comboBox_11.currentIndex() == 0:
+            sql = ('''
+                SELECT * FROM clients WHERE name = %s
+            ''')
+            self.cur.execute(sql, [(client_data)])
+            date = self.cur.fetchone()
+            print(date)
+        elif self.comboBox_11.currentIndex() == 1:
+            sql = ('''
+                SELECT * FROM clients WHERE mail = %s
+            ''')
+            self.cur.execute(sql, [(client_data)])
+            date = self.cur.fetchone()
+            print(date)
+        elif self.comboBox_11.currentIndex() == 2:
+            sql = ('''
+                SELECT * FROM clients WHERE phone = %s
+            ''')
+            self.cur.execute(sql, [(client_data)])
+            date = self.cur.fetchone()
+            print(date)
+        else:
+            sql = ('''
+                SELECT * FROM clients WHERE National_ID = %s
+            ''')
+            self.cur.execute(sql, [(client_data)])
+            date = self.cur.fetchone()
+            print(date)
 
     def Edit_Client(self):
         # Edit_Client
@@ -215,7 +288,7 @@ class Main(QMainWindow, mainui):
             (%s, %s, %s)
         ''', (branch_name, branch_code, branch_location))
         self.db.commit()
-        print('branch added')
+        self.statusBar().showMessage('Branch added successfully')
 
     def Add_Category(self):
         # To Add_Category
@@ -234,7 +307,7 @@ class Main(QMainWindow, mainui):
             (%s, %s)
         ''', (category_name, parent_category_id))
         self.db.commit()
-        print('category added')
+        self.statusBar().showMessage('Category added successfully')
         # To show the new category after added without restart the app
         self.Show_All_Categories()
 
@@ -249,7 +322,7 @@ class Main(QMainWindow, mainui):
             (%s, %s)
         ''', (publisher_name, publisher_location))
         self.db.commit()
-        print('publisher added')
+        self.statusBar().showMessage('Publisher added successfully')
 
     def Add_Author(self):
         # To Add_Author
@@ -262,7 +335,7 @@ class Main(QMainWindow, mainui):
             (%s, %s)
         ''', (author_name, author_location))
         self.db.commit()
-        print('Author added')
+        self.statusBar().showMessage('Author added successfully')
 
     def Add_Employee(self):
         # To Add_Employee
@@ -285,7 +358,7 @@ class Main(QMainWindow, mainui):
             ''', (employee_name, employee_mail, employee_phone, date, employee_national_id, employee_periority, employee_password, employee_branch))
             self.db.commit()
         else:
-            print('Wrong password')
+            self.statusBar().showMessage('Wrong password')
 
     def Edit_Employee(self):
         # To Edit_Employee
@@ -304,16 +377,17 @@ class Main(QMainWindow, mainui):
     def Show_All_Categories(self):
         self.comboBox_12.clear()
         self.cur.execute('''
-            SELECT category_name FROM category
+            SELECT category_name FROM category ORDER BY id ASC
         ''')
         categories = self.cur.fetchall()
         for category in categories:
             self.comboBox_12.addItem(str(category[0]))
             self.comboBox_3.addItem(str(category[0]))
+            self.comboBox_4.addItem(str(category[0]))
 
     def Show_Branchies(self):
         self.cur.execute('''
-            SELECT name FROM branch
+            SELECT name FROM branch ORDER BY id ASC
         ''')
         branchies = self.cur.fetchall()
         for branch in branchies:
@@ -322,19 +396,21 @@ class Main(QMainWindow, mainui):
 
     def Show_Publisher(self):
         self.cur.execute('''
-            SELECT name FROM publisher
+            SELECT name FROM publisher ORDER BY id ASC
         ''')
         publishers = self.cur.fetchall()
         for publisher in publishers:
             self.comboBox_7.addItem(str(publisher[0]))
+            self.comboBox_9.addItem(str(publisher[0]))
 
     def Show_Authors(self):
         self.cur.execute('''
-            SELECT name FROM author
+            SELECT name FROM author ORDER BY id ASC
         ''')
         authores = self.cur.fetchall()
         for author in authores:
             self.comboBox_6.addItem(str(author[0]))
+            self.comboBox_10.addItem(str(author[0]))
 
     ###############################
 
