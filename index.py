@@ -22,6 +22,8 @@ class Main(QMainWindow, mainui):
         self.Show_Branchies()
         self.Show_Publisher()
         self.Show_Authors()
+        self.Show_All_Books()
+        self.Show_All_Clients()
 
     def UI_changes(self):
         # UI changes in login
@@ -51,6 +53,7 @@ class Main(QMainWindow, mainui):
         self.pushButton_24.clicked.connect(self.Add_Category)
         self.pushButton_20.clicked.connect(self.Add_Employee)
         self.pushButton_10.clicked.connect(self.Add_New_Book)
+        self.pushButton_15.clicked.connect(self.Add_New_Client)
 
     def Handle_Login(self):
         # Handle login
@@ -68,7 +71,18 @@ class Main(QMainWindow, mainui):
 
     def Show_All_Books(self):
         # To Show_All_Books
-        pass
+        self.tableWidget_2.insertRow(0)
+        self.cur.execute('''
+            SELECT code, title, category_id, author_id, price FROM books
+        ''')
+        date = self.cur.fetchall()
+        for row, form in enumerate(date):
+            for col, item in enumerate(form):
+                self.tableWidget_2.setItem(
+                    row, col, QTableWidgetItem(str(item)))
+                col += 1
+            row_position = self.tableWidget_2.rowCount()
+            self.tableWidget_2.insertRow(row_position)
 
     def Add_New_Book(self):
         # To Add_New_Book
@@ -105,11 +119,35 @@ class Main(QMainWindow, mainui):
     # Clients
     def Show_All_Clients(self):
         # To Show_All_Clients
-        pass
+        self.tableWidget_3.insertRow(0)
+        self.cur.execute('''
+            SELECT name, mail, phone, date, National_ID FROM clients
+        ''')
+        date = self.cur.fetchall()
+        for row, form in enumerate(date):
+            for col, item in enumerate(form):
+                self.tableWidget_3.setItem(
+                    row, col, QTableWidgetItem(str(item)))
+                col += 1
+            row_position = self.tableWidget_3.rowCount()
+            self.tableWidget_3.insertRow(row_position)
 
     def Add_New_Client(self):
         # To Add_New_Clients
-        pass
+        client_name = self.lineEdit_11.text()
+        client_mail = self.lineEdit_12.text()
+        client_phone = self.lineEdit_13.text()
+        client_national_id = self.lineEdit_14.text()
+        date = datetime.datetime.now()
+
+        self.cur.execute('''
+            INSERT INTO clients
+            (name, mail, phone, date, National_ID)
+            VALUES
+            (%s, %s, %s, %s, %s)
+        ''', (client_name, client_mail, client_phone, date, client_national_id))
+        self.db.commit()
+        print('client added successfully')
 
     def Edit_Client(self):
         # Edit_Client
