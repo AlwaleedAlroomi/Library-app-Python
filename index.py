@@ -24,6 +24,7 @@ class Main(QMainWindow, mainui):
         self.Show_Authors()
         self.Show_All_Books()
         self.Show_All_Clients()
+        self.Retrieve_Today_Work()
 
     def UI_changes(self):
         # UI changes in login
@@ -57,6 +58,9 @@ class Main(QMainWindow, mainui):
         self.pushButton_11.clicked.connect(self.Edit_Book_Search)
         self.pushButton_12.clicked.connect(self.Save_Edit)
         self.pushButton_17.clicked.connect(self.Edit_Client_Search)
+        self.pushButton_16.clicked.connect(self.Edit_Client)
+        self.pushButton_13.clicked.connect(self.Delete_Book)
+        self.pushButton_18.clicked.connect(self.Delete_Client)
 
     def Handle_Login(self):
         # Handle login
@@ -68,12 +72,58 @@ class Main(QMainWindow, mainui):
 
     def Handle_Today_Work(self):
         # Handle today operations
-        pass
+        book_title = self.lineEdit_39.text()
+        client_nationl_id = self.lineEdit_38.text()
+        type = self.comboBox.currentIndex()
+        from_date = str(datetime.date.today())
+        # to_date = self.dateEdit_6.date()
+        to_date = str(datetime.date.today())
+        date = datetime.datetime.now()
+        branch = 1
+        employee = 1
+        self.cur.execute('''
+            INSERT INTO daily_movements(book_id , client_id , type,date,branch_id,book_from , book_to , employee_id)
+            VALUES(%s , %s , %s , %s , %s , %s , %s , %s)
+        ''', (book_title, client_nationl_id, type, date, branch, from_date, to_date, employee))
+        self.db.commit()
+        self.Retrieve_Today_Work()
+
+    def Retrieve_Today_Work(self):
+        self.cur.execute('''
+            SELECT book_id, type, client_id, Book_from, Book_to FROM daily_movements
+        ''')
+        data = self.cur.fetchall()
+        self.tableWidget.setRowCount(0)
+        self.tableWidget.insertRow(0)
+        for row, form in enumerate(data):
+            for col, item in enumerate(form):
+                if col == 1:
+                    if item == str(0):
+                        self.tableWidget.setItem(
+                            row, col, QTableWidgetItem(str("Rent")))
+                    else:
+                        self.tableWidget.setItem(
+                            row, col, QTableWidgetItem(str("Retrieve")))
+                elif col == 2:
+                    sql = ('''
+                        SELECT name FROM clients WHERE National_ID = %s
+                    ''')
+                    self.cur.execute(sql, [(item)])
+                    client_name = self.cur.fetchone()
+                    self.tableWidget.setItem(
+                        row, col, QTableWidgetItem(str(client_name[0])))
+                else:
+                    self.tableWidget.setItem(
+                        row, col, QTableWidgetItem(str(item)))
+                col += 1
+            row_position = self.tableWidget.rowCount()
+            self.tableWidget.insertRow(row_position)
     ##########################################
     # Books
 
     def Show_All_Books(self):
         # To Show_All_Books
+        self.tableWidget_2.setRowCount(0)
         self.tableWidget_2.insertRow(0)
         self.cur.execute('''
             SELECT code, title, category_id, author_id, price FROM books
@@ -109,6 +159,7 @@ class Main(QMainWindow, mainui):
         ''', (book_title, book_description, book_category, book_code, book_barcode, book_part_order, book_price, book_publisher, book_author, book_status, date))
         self.db.commit()
         self.statusBar().showMessage('Book added successfully')
+        self.Show_All_Books()
 
     def Edit_Book_Search(self):
         # Edit_Book
@@ -151,18 +202,29 @@ class Main(QMainWindow, mainui):
                                book_code))
         self.db.commit()
         self.statusBar().showMessage('Book information updated successfully')
+        self.Show_All_Books()
 
     def Delete_Book(self):
         # To Delete_Book
-        pass
+        book_code = self.lineEdit_10.text()
+        delete_message = QMessageBox.warning(self, 'Delete a Book', 'Are you sure you want to delete this book?',
+                                             QMessageBox.Yes | QMessageBox.No)
+        if delete_message.QMessageBox.Yes:
+            sql = ('DELETE FROM books WHERE code = %s')
+            self.cur.execute(sql, [(book_code)])
+            self.db.commit()
+            self.statusBar().showMessage('Book deleted successfully')
+            self.Show_All_Books()
 
     ##########################################
     # Clients
+
     def Show_All_Clients(self):
         # To Show_All_Clients
+        self.tableWidget_3.setRowCount(0)
         self.tableWidget_3.insertRow(0)
         self.cur.execute('''
-            SELECT name, mail, phone, date, National_ID FROM clients
+            SELECT name, mail, phone, National_ID, date FROM clients
         ''')
         date = self.cur.fetchall()
         for row, form in enumerate(date):
@@ -189,6 +251,7 @@ class Main(QMainWindow, mainui):
         ''', (client_name, client_mail, client_phone, date, client_national_id))
         self.db.commit()
         self.statusBar().showMessage('Client added successfully')
+        self.Show_All_Clients()
 
     def Edit_Client_Search(self):
         # Edit_Client
@@ -199,39 +262,74 @@ class Main(QMainWindow, mainui):
             ''')
             self.cur.execute(sql, [(client_data)])
             date = self.cur.fetchone()
-            print(date)
         elif self.comboBox_11.currentIndex() == 1:
             sql = ('''
                 SELECT * FROM clients WHERE mail = %s
             ''')
             self.cur.execute(sql, [(client_data)])
             date = self.cur.fetchone()
-            print(date)
         elif self.comboBox_11.currentIndex() == 2:
             sql = ('''
                 SELECT * FROM clients WHERE phone = %s
             ''')
             self.cur.execute(sql, [(client_data)])
             date = self.cur.fetchone()
-            print(date)
         else:
             sql = ('''
                 SELECT * FROM clients WHERE National_ID = %s
             ''')
             self.cur.execute(sql, [(client_data)])
             date = self.cur.fetchone()
-            print(date)
+
+        self.lineEdit_18.setText(date[1])
+        self.lineEdit_16.setText(date[2])
+        self.lineEdit_17.setText(date[3])
+        self.lineEdit_15.setText(str(date[5]))
 
     def Edit_Client(self):
         # Edit_Client
-        pass
+        client_name = self.lineEdit_18.text()
+        client_mail = self.lineEdit_16.text()
+        client_phone = self.lineEdit_17.text()
+        client_national_id = self.lineEdit_15.text()
+        self.cur.execute('''
+            UPDATE clients 
+            SET name = %s, mail = %s, phone = %s, National_ID = %s
+        ''', (client_name, client_mail, client_phone, client_national_id))
+        self.db.commit()
+        self.statusBar().showMessage('Client information updated successfully')
+        self.Show_All_Clients()
 
     def Delete_Client(self):
         # To Delete_Client
-        pass
+        client_data = self.lineEdit_19.text()
+        if self.comboBox_11.currentIndex() == 0:
+            sql = ('''
+                DELETE FROM clients WHERE name = %s
+            ''')
+            self.cur.execute(sql, [(client_data)])
+        elif self.comboBox_11.currentIndex() == 1:
+            sql = ('''
+                DELETE FROM clients WHERE mail = %s
+            ''')
+            self.cur.execute(sql, [(client_data)])
+        elif self.comboBox_11.currentIndex() == 2:
+            sql = ('''
+                DELETE FROM clients WHERE phone = %s
+            ''')
+            self.cur.execute(sql, [(client_data)])
+        else:
+            sql = ('''
+                DELETE FROM clients WHERE National_ID = %s
+            ''')
+            self.cur.execute(sql, [(client_data)])
+        self.db.commit()
+        self.statusBar().showMessage('Cleint deleted successfully')
+        self.Show_All_Clients()
 
     ##########################################
     # History
+
     def Show_History(self):
         # Show All History to the Admin
         pass
@@ -384,6 +482,7 @@ class Main(QMainWindow, mainui):
             self.comboBox_12.addItem(str(category[0]))
             self.comboBox_3.addItem(str(category[0]))
             self.comboBox_4.addItem(str(category[0]))
+            self.comboBox_2.addItem(str(category[0]))
 
     def Show_Branchies(self):
         self.cur.execute('''

@@ -658,9 +658,9 @@ QSlider::sub-page:vertical {
      <widget class="QComboBox" name="comboBox">
       <property name="geometry">
        <rect>
-        <x>270</x>
+        <x>490</x>
         <y>20</y>
-        <width>191</width>
+        <width>111</width>
         <height>31</height>
        </rect>
       </property>
@@ -683,9 +683,9 @@ QSlider::sub-page:vertical {
      <widget class="QPushButton" name="pushButton_8">
       <property name="geometry">
        <rect>
-        <x>490</x>
+        <x>610</x>
         <y>20</y>
-        <width>191</width>
+        <width>131</width>
         <height>31</height>
        </rect>
       </property>
@@ -702,19 +702,6 @@ QSlider::sub-page:vertical {
         <height>491</height>
        </rect>
       </property>
-      <column>
-       <property name="text">
-        <string>Book Code</string>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="textAlignment">
-        <set>AlignCenter</set>
-       </property>
-      </column>
       <column>
        <property name="text">
         <string>Book Name</string>
@@ -784,19 +771,22 @@ QSlider::sub-page:vertical {
      <widget class="QLineEdit" name="lineEdit_38">
       <property name="geometry">
        <rect>
-        <x>50</x>
+        <x>190</x>
         <y>20</y>
-        <width>191</width>
-        <height>21</height>
+        <width>171</width>
+        <height>31</height>
        </rect>
+      </property>
+      <property name="placeholderText">
+       <string>Client National ID</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="lineEdit_39">
       <property name="geometry">
        <rect>
-        <x>50</x>
+        <x>10</x>
         <y>20</y>
-        <width>191</width>
+        <width>171</width>
         <height>31</height>
        </rect>
       </property>
@@ -804,11 +794,36 @@ QSlider::sub-page:vertical {
        <string>Book title</string>
       </property>
      </widget>
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>26</y>
+        <width>67</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>to:</string>
+      </property>
+     </widget>
+     <widget class="QDateEdit" name="dateEdit_6">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>20</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
      <zorder>pushButton_8</zorder>
      <zorder>tableWidget</zorder>
      <zorder>comboBox</zorder>
      <zorder>lineEdit_38</zorder>
      <zorder>lineEdit_39</zorder>
+     <zorder>label_7</zorder>
+     <zorder>dateEdit_6</zorder>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -824,7 +839,7 @@ QSlider::sub-page:vertical {
        </rect>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_8">
        <attribute name="title">
@@ -1494,7 +1509,7 @@ QSlider::sub-page:vertical {
        </rect>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_11">
        <attribute name="title">
