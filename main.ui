@@ -417,7 +417,7 @@ QSlider::sub-page:vertical {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab_21">
      <attribute name="title">
@@ -878,19 +878,6 @@ QSlider::sub-page:vertical {
          </property>
         </item>
        </widget>
-       <widget class="QTextEdit" name="textEdit_2">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>20</y>
-          <width>191</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="placeholderText">
-         <string>Book Title</string>
-        </property>
-       </widget>
        <widget class="QLabel" name="label">
         <property name="geometry">
          <rect>
@@ -923,7 +910,7 @@ QSlider::sub-page:vertical {
         </column>
         <column>
          <property name="text">
-          <string>New Column</string>
+          <string>Book Title</string>
          </property>
         </column>
         <column>
@@ -969,6 +956,19 @@ QSlider::sub-page:vertical {
         </property>
         <property name="text">
          <string>Import</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>191</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="placeholderText">
+         <string>Book title</string>
         </property>
        </widget>
       </widget>

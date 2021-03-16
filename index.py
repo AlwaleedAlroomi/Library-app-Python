@@ -61,6 +61,7 @@ class Main(QMainWindow, mainui):
         self.pushButton_16.clicked.connect(self.Edit_Client)
         self.pushButton_13.clicked.connect(self.Delete_Book)
         self.pushButton_18.clicked.connect(self.Delete_Client)
+        self.pushButton_9.clicked.connect(self.All_Books_Filter)
 
     def Handle_Login(self):
         # Handle login
@@ -136,6 +137,23 @@ class Main(QMainWindow, mainui):
                 col += 1
             row_position = self.tableWidget_2.rowCount()
             self.tableWidget_2.insertRow(row_position)
+
+    def All_Books_Filter(self):
+        self.tableWidget_2.setRowCount(0)
+        self.tableWidget_2.insertRow(0)
+        book_title = self.lineEdit.text()
+        sql = '''SELECT code, title, category_id, author_id, price FROM books WHERE title = %s'''
+        self.cur.execute(sql, [(book_title)])
+        data = self.cur.fetchall()
+        for row, form in enumerate(data):
+            for col, item in enumerate(form):
+                self.tableWidget_2.setItem(
+                    row, col, QTableWidgetItem(str(item)))
+                col += 1
+            row_position = self.tableWidget_2.rowCount()
+            self.tableWidget_2.insertRow(row_position)
+        if book_title == "":
+            self.Show_All_Books()
 
     def Add_New_Book(self):
         # To Add_New_Book
