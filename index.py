@@ -24,6 +24,7 @@ class Main(QMainWindow, mainui):
         self.Show_Authors()
         self.Show_All_Books()
         self.Show_All_Clients()
+        self.Show_Employee()
         self.Retrieve_Today_Work()
 
     def UI_changes(self):
@@ -62,6 +63,8 @@ class Main(QMainWindow, mainui):
         self.pushButton_13.clicked.connect(self.Delete_Book)
         self.pushButton_18.clicked.connect(self.Delete_Client)
         self.pushButton_9.clicked.connect(self.All_Books_Filter)
+        self.pushButton_30.clicked.connect(self.Check_Employee)
+        self.pushButton_29.clicked.connect(self.Edit_Employee)
 
     def Handle_Login(self):
         # Handle login
@@ -132,8 +135,21 @@ class Main(QMainWindow, mainui):
         date = self.cur.fetchall()
         for row, form in enumerate(date):
             for col, item in enumerate(form):
-                self.tableWidget_2.setItem(
-                    row, col, QTableWidgetItem(str(item)))
+                if col == 2:
+                    sql = 'SELECT category_name FROM category WHERE id = %s'
+                    self.cur.execute(sql, [(item)])
+                    category_name = self.cur.fetchone()
+                    self.tableWidget_2.setItem(
+                        row, col, QTableWidgetItem(str(category_name[0])))
+                elif col == 3:
+                    sql = 'SELECT name FROM author WHERE id = %s'
+                    self.cur.execute(sql, [(item + 2)])
+                    author_name = self.cur.fetchone()
+                    self.tableWidget_2.setItem(
+                        row, col, QTableWidgetItem(str(author_name[0])))
+                else:
+                    self.tableWidget_2.setItem(
+                        row, col, QTableWidgetItem(str(item)))
                 col += 1
             row_position = self.tableWidget_2.rowCount()
             self.tableWidget_2.insertRow(row_position)
@@ -473,12 +489,69 @@ class Main(QMainWindow, mainui):
                 (%s, %s, %s, %s, %s, %s, %s, %s)
             ''', (employee_name, employee_mail, employee_phone, date, employee_national_id, employee_periority, employee_password, employee_branch))
             self.db.commit()
+            self.statusBar().showMessage('Employee added successfully')
+            self.lineEdit_24.setText('')
+            self.lineEdit_23.setText('')
+            self.lineEdit_27.setText('')
+            self.lineEdit_25.setText('')
+            self.lineEdit_49.setText('')
+            self.lineEdit_29.setText('')
+            self.lineEdit_30.setText('')
+            self.lineEdit_23.setText('')
         else:
             self.statusBar().showMessage('Wrong password')
 
+    def Check_Employee(self):
+        employee_name = self.lineEdit_44.text()
+        employee_password = self.lineEdit_47.text()
+        self.cur.execute('''
+            SELECT * FROM employee
+        ''')
+        data = self.cur.fetchall()
+        for row in data:
+            if row[1] == employee_name and row[7] == employee_password:
+                self.groupBox_9.setEnabled(True)
+                self.lineEdit_43.setText(row[2])
+                self.lineEdit_46.setText(row[3])
+                self.lineEdit_45.setText(str(row[5]))
+                self.comboBox_21.setCurrentIndex(row[8])
+                self.lineEdit_50.setText(str(row[6]))
+                self.lineEdit_48.setText(str(row[7]))
+
     def Edit_Employee(self):
         # To Edit_Employee
-        pass
+        employee_name = self.lineEdit_44.text()
+        employee_password = self.lineEdit_47.text()
+        employee_mail = self.lineEdit_43.text()
+        employee_phone = self.lineEdit_46.text()
+        employee_national_id = self.lineEdit_45.text()
+        employee_branch = self.comboBox_21.currentIndex()
+        employee_periority = self.lineEdit_50.text()
+        employee_password2 = self.lineEdit_48.text()
+        date = datetime.datetime.now()
+        if employee_password == employee_password2:
+            self.cur.execute('''
+                UPDATE employee SET
+                mail = %s,
+                phone = %s, date = %s,
+                National_ID = %s, periority = %s,
+                password = %s, branch = %s 
+                WHERE name = %s
+            ''', (employee_mail,
+                  employee_phone, date,
+                  employee_national_id, employee_periority,
+                  employee_password, employee_branch, employee_name))
+            self.db.commit()
+            self.statusBar().showMessage('Employee information updated successfully')
+            self.lineEdit_44.setText('')
+            self.lineEdit_47.setText('')
+            self.lineEdit_43.setText('')
+            self.lineEdit_46.setText('')
+            self.lineEdit_45.setText('')
+            self.lineEdit_50.setText('')
+            self.lineEdit_48.setText('')
+            self.groupBox_9.setEnabled(False)
+            self.comboBox_21.setCurrentIndex(0)
 
     def Add_Employee_Permision(self):
         # To Add_Employee_Permision
@@ -529,7 +602,15 @@ class Main(QMainWindow, mainui):
             self.comboBox_6.addItem(str(author[0]))
             self.comboBox_10.addItem(str(author[0]))
 
-    ###############################
+    def Show_Employee(self):
+        self.cur.execute('''
+            SELECT name FROM employee
+        ''')
+        employees = self.cur.fetchall()
+        for employee in employees:
+            self.comboBox_18.addItem(employee[0])
+
+        ###############################
 
     def Open_Login_tab(self):
         self.tabWidget.setCurrentIndex(0)
